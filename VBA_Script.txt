@@ -1,0 +1,80 @@
+Sub multiple_stock()
+    For Each ws In Worksheets
+
+        Dim ticker As String
+        Dim yearlyChange As Double
+    
+        Dim percentChange As Double
+        Dim TotalStockVolume As Double
+        TotalStockVolume = 0
+        
+        Dim Summary_row As Integer
+        Summary_row = 2
+        
+        Dim iLastStart As Double
+        Dim openVal As Double
+        Dim closeVal As Double
+        iLastStart = 2
+        
+        Dim iLastYearlyChange As Integer
+        iLastYearlyChange = 2
+        
+         
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percent Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+        lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        lastrow1 = ws.Cells(Rows.Count, 10).End(xlUp).Row
+        WorksheetName = ws.Name
+        
+            
+            For i = 2 To lastrow
+                    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                        ticker = ws.Cells(i, 1).Value
+                             
+                        ws.Range("I" & Summary_row).Value = ticker
+                
+                        TotalStockVolume = TotalStockVolume + ws.Cells(i + 1, 7).Value
+                        ws.Range("L" & Summary_row).Value = TotalStockVolume
+                
+                
+                        closeVal = ws.Cells(i, 6)
+                        openVal = ws.Cells(iLastStart, 3)
+                        yearlyChange = closeVal - openVal
+                        ws.Range("J" & Summary_row).Value = yearlyChange
+                        
+                        percentChange = (yearlyChange) / openVal
+                        ws.Range("K" & Summary_row).Value = FormatPercent(percentChange)
+                        
+                        TotalStockVolume = 0
+                        iLastStart = i + 1
+                        Summary_row = Summary_row + 1
+                    Else
+                
+                        TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+                    End If
+            Next i
+            
+            For i = 2 To lastrow1
+            
+                    If ws.Cells(i, 10).Value >= 0 Then
+                        ws.Cells(i, 10).Interior.ColorIndex = 4
+                    Else
+                        If ws.Cells(i, 10).Value < 0 Then
+                        ws.Cells(i, 10).Interior.ColorIndex = 3
+                        End If
+                        iLastYearlyChange = i + 1
+                                         
+                    End If
+            
+            Next i
+    Next ws
+    
+        
+    
+    MsgBox ("Fixes Complete")
+    
+End Sub
+    
